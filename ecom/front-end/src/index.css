@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+.container {
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+/* .menu li a,
+.mobile li a {
+    font-size: 18px;
+    font-weight: 500;
+    transition: all .2s linear;
+
+}
+
+.menu li a:hover {
+    color: #53cd8a;
+    color: #db4444;
+}
+
+.mobile li a:hover {
+    color: #ffffff;
+} */
+.bgcolor{
+    @apply bg-[#DB4444]
+}
+/* ! menus */
+.menus li a{
+    @apply font-medium 
+}
+.menus li a:hover,
+.fmenu a:hover,
+.user a:hover {
+    @apply text-[#DB4444] duration-200;
+}
+
+.menus li a::after {
+    @apply absolute w-0 content-[""] h-0.5 text-[#000000] left-0 bottom-[-5px] duration-500;
+}
+
+.menus li a:hover::after {
+    @apply w-full;
+}
+
+/* ! menus */
+
+img.w-full.object-cover.object-top.aspect-230\/307{
+  aspect-ratio: 230 / 307;
+  object-fit: contain;      /* ইমেজ ক্রপ হবে না */
+  object-position: center;  /* মাঝখানে থাকবে */
+  background-color: #f9fafb; /* হালকা ব্যাকগ্রাউন্ড */
+}
