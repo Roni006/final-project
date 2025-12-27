@@ -64,120 +64,69 @@ const Shop = () => {
     );
 
     return (
-        <main className="py-10">
+        <main className="py-6 md:py-10 px-6 sm:px-8 lg:px-0"> {/* Added padding here for left side gap */}
             <Container>
                 {/* BREADCRUMB */}
-                <div className="mb-6 text-sm text-slate-500">
+                <div className="mb-6 text-sm text-slate-500 pl-1">
                     <Link to="/" className="hover:underline">Home</Link>
                     <span className="mx-2">/</span>
                     <span className="text-slate-900 font-medium">Shop</span>
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-8">
-
-                    {/* FILTER */}
+                    {/* FILTER SIDEBAR */}
                     <div className="w-full lg:max-w-[280px] lg:border-r border-gray-100 lg:pr-6">
-                        <div className="bg-gray-50 px-6 py-6 rounded-md lg:rounded-none">
-
-                            <div className="flex items-center border-b border-gray-300 pb-2 mb-6">
-                                <h3 className="text-slate-900 text-lg font-semibold">
-                                    Filter
-                                </h3>
+                        <div className="bg-gray-50 px-6 py-6 rounded-md">
+                            <div className="flex items-center border-b border-gray-300 pb-3 mb-6">
+                                <h3 className="text-slate-900 text-lg font-semibold">Filter</h3>
                                 <button
-                                    onClick={() => {
-                                        setPrice(10000);
-                                        setSelectedCategory("");
-                                        setPage(1);
-                                    }}
+                                    onClick={() => { setPrice(10000); setSelectedCategory(""); }}
                                     className="text-sm text-red-500 font-semibold ml-auto"
                                 >
                                     Clear
                                 </button>
                             </div>
 
-                            {/* PRICE FILTER */}
-                            <div>
-                                <h4 className="text-slate-900 text-base font-semibold">
-                                    Price
-                                </h4>
-
+                            {/* Price Range */}
+                            <div className="mb-8">
+                                <h4 className="font-semibold mb-2">Price: ${price}</h4>
                                 <input
-                                    type="range"
-                                    min="0"
-                                    max="10000"
-                                    value={price}
-                                    onChange={(e) => {
-                                        setPrice(Number(e.target.value));
-                                        setPage(1);
-                                    }}
-                                    className="w-full mt-4 accent-slate-900"
+                                    type="range" min="0" max="10000" value={price}
+                                    onChange={(e) => setPrice(Number(e.target.value))}
+                                    className="w-full accent-slate-900"
                                 />
-
-                                <div className="flex justify-between text-sm text-slate-600 mt-2">
-                                    <span>$0</span>
-                                    <span>${price}</span>
-                                </div>
                             </div>
 
-                            {/* CATEGORY DROPDOWN */}
-                            <div className="mt-8">
-                                <h4 className="text-slate-900 text-base font-semibold mb-3">
-                                    Category
-                                </h4>
-
+                            {/* Category */}
+                            <div>
+                                <h4 className="font-semibold mb-3">Category</h4>
                                 <select
                                     value={selectedCategory}
-                                    onChange={(e) => {
-                                        setSelectedCategory(e.target.value);
-                                        setPage(1);
-                                    }}
-                                    className="w-full border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-slate-900"
+                                    onChange={(e) => setSelectedCategory(e.target.value)}
+                                    className="w-full border p-2 rounded bg-white outline-none"
                                 >
                                     <option value="">All Categories</option>
-                                    {categories.map((category) => (
-                                        <option key={category._id} value={category._id}>
-                                            {category.name}
-                                        </option>
+                                    {/* Make sure 'categories' array exists */}
+                                    {categories?.map((cat) => (
+                                        <option key={cat._id} value={cat._id}>{cat.name}</option>
                                     ))}
                                 </select>
                             </div>
                         </div>
                     </div>
 
-                    {/* PRODUCTS */}
-                    <div className="flex-1">
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6">
-                            {paginatedProducts.map((product) => (
-                                <ProductCard
-                                    key={product._id}
-                                    product={product}
-                                />
+                    {/* PRODUCT GRID */}
+                    <div className="flex-1 lg:pl-6"> {/* Added left padding for desktop view */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                            {/* Ensure paginatedProducts is defined */}
+                            {paginatedProducts?.map((product) => (
+                                <ProductCard key={product._id} product={product} />
                             ))}
                         </div>
-
-                        {/* PAGINATION */}
-                        {totalPages > 1 && (
-                            <div className="flex justify-center gap-2 mt-10">
-                                {Array.from({ length: totalPages }).map((_, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => setPage(i + 1)}
-                                        className={`px-4 py-2 text-sm border ${page === i + 1
-                                            ? "bg-slate-900 text-white"
-                                            : "bg-white text-slate-700"
-                                            }`}
-                                    >
-                                        {i + 1}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
                     </div>
-
                 </div>
-                
-            </Container >
-        </main >
+            </Container>
+        </main>
     );
 };
 

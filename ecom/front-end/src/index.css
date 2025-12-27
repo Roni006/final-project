@@ -50,3 +50,7 @@ img.w-full.object-cover.object-top.aspect-230\/307{
   object-position: center;  /* মাঝখানে থাকবে */
   background-color: #f9fafb; /* হালকা ব্যাকগ্রাউন্ড */
 }
+
+.hide{
+    @apply hidden;
+}

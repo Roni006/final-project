@@ -1,126 +1,146 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate, Link } from "react-router";
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
+import loginImage from '../assets/login.png';
+import axios from 'axios';
+import { Link, useNavigate } from 'react-router';
+import { Bounce, toast } from 'react-toastify';
 const Login = () => {
   const navigate = useNavigate();
 
-//   const [formData, setFormData] = useState({
-//     email: "rameem.me@gmail.com",
-//     password: "123456",
-//   });
-const [email, setEmail] = useState("");
-const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const login = async (data) => {
+    console.log(errors);
 
-//   const handleChange = (e) => {
-//     setFormData({
-//       ...formData,
-//       [e.target.name]: e.target.value,
-//     });
-//   };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+    console.log(data);
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        {
-            email, password
+      let res = await axios.post(`${import.meta.env.VITE_API}/auth/login`,
+        data, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
         }
+      }
       );
+
+      // todo: react toast success message 
+      toast.success('Login successful!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      });
+      // todo: react toast success message
+
+
+
+      navigate('/');
       console.log(res);
-      
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      navigate("/profile");
-    } catch (err) {
-      setError(
-        err?.response?.data?.message || "Login failed. Try again."
-      );
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      toast.error('Invalid Credentials', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
-  };
-
+  }
   return (
-    <div className="bg-gray-50 min-h-screen flex items-center justify-center px-4">
-      <div className="max-w-[420px] w-full">
+    <section className="px-6 md:px-0"> {/* Padding for mobile left/right */}
+      <div className="container mx-auto">
+        <div className="login-details flex flex-col lg:flex-row gap-10 lg:gap-[130px] items-center pt-10 md:pt-[100px] pb-20 md:pb-[220px]">
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-          <h1 className="text-3xl font-semibold text-slate-900 text-center">
-            Sign in
-          </h1>
+          {/* Image Side - Hidden or Resized on Mobile */}
+          <div className="w-full lg:w-[662px]">
+            <img
+              src={loginImage}
+              alt="login image"
+              className="w-full h-auto object-cover rounded-md"
+            />
+          </div>
 
-          <form onSubmit={handleSubmit} className="mt-10 space-y-6">
-
-            {error && (
-              <p className="text-red-500 text-sm text-center">
-                {error}
-              </p>
-            )}
-
-            <div>
-              <label className="block text-sm font-medium text-slate-900 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                required
-                value={email}
-                // onChange={handleChange}
-                onChange={e => setEmail(e.target.value)}
-                className="w-full border border-slate-300 rounded-md px-4 py-3 text-sm outline-blue-600"
-                placeholder="Enter your email"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-900 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                required
-                value={password}
-                // onChange={handleChange}
-                onChange={e => setPassword(e.target.value)}
-                className="w-full border border-slate-300 rounded-md px-4 py-3 text-sm outline-blue-600"
-                placeholder="Enter your password"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2.5 text-sm font-medium rounded-md text-white bg-slate-800 hover:bg-slate-900 transition disabled:opacity-60"
-            >
-              {loading ? "Signing in..." : "Sign in"}
-            </button>
-
-            <p className="text-sm text-slate-600 text-center">
-              Don&apos;t have an account?
-              <Link
-                to="/register"
-                className="ml-1 text-blue-600 font-medium hover:underline"
-              >
-                Register here
-              </Link>
+          {/* Form Side */}
+          <div className="w-full max-w-[400px] lg:w-[371px]">
+            <h1 className='font-medium text-2xl md:text-3xl text-center lg:text-left'>
+              Login in to <span className='text-[#DB4444]'>FootPath</span>
+            </h1>
+            <p className="leading-6 text-base font-poppins text-[#000000] font-normal pt-4 pb-8 md:pb-12 text-center lg:text-left">
+              Enter Your Details Below
             </p>
-          </form>
-        </div>
 
+            <form onSubmit={handleSubmit(login)}>
+              {/* Email Input */}
+              <div className="mb-6">
+                <input
+                  {...register("email", { required: "Email is required" })}
+                  className="w-full border-b-2 border-[rgba(0,0,0,0.46)] pb-2 outline-0 pe-2 font-poppins focus:border-[#DB4444] transition-colors"
+                  type="email"
+                  placeholder="Email or Phone Number"
+                />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+              </div>
+
+              {/* Password Input */}
+              <div className="mb-6">
+                <input
+                  {...register("password", { required: "Password is required" })}
+                  className="w-full border-b-2 border-[rgba(0,0,0,0.46)] pb-2 outline-0 pe-2 pt-8 font-poppins focus:border-[#DB4444] transition-colors"
+                  type="password"
+                  placeholder="Password"
+                />
+                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+              </div>
+
+              {/* Buttons Row */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
+                <button
+                  type="submit"
+                  className="w-full sm:w-auto font-medium font-poppins text-base text-[#FAFAFA] py-4 px-12 bg-[#DB4444] rounded-[5px] cursor-pointer hover:bg-red-600 transition-all"
+                >
+                  Login
+                </button>
+                <button
+                  type="button"
+                  className="text-[#db4444] text-base font-poppins hover:underline"
+                >
+                  Forget Password?
+                </button>
+              </div>
+
+              {/* Register Link */}
+              <div className='mt-8 text-center lg:text-left'>
+                <p className="text-gray-600">
+                  Dont have an account?
+                  <Link to='/register' className="ml-2 text-black font-bold hover:text-[#DB4444] transition-colors">
+                    Register Now
+                  </Link>
+                </p>
+              </div>
+            </form>
+          </div>
+
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
 export default Login;
+
