@@ -1,7 +1,135 @@
 import loginImage from "../assets/login.png"
 import google from "../assets/goggle.png"
-import { Link } from "react-router"
+import { Link, useNavigate, useSearchParams } from "react-router"
+import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import Cookies from 'js-cookie'
+import axios from "axios";
+import { toast } from "react-toastify";
+import { Oval } from 'react-loader-spinner'
+
 const Registration = () => {
+    const [success, setSuccess] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const token = Cookies.get('token');
+    const navigate = useNavigate();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
+
+    const registration = async (data) => {
+        setLoading(true);
+        try {
+            let res = await axios.post(`${import.meta.env.VITE_API}/auth/register`,
+                data, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            }
+            );
+
+            if (res.success) {
+                setLoading(false);
+                setSuccess(true);
+            }
+
+            if (!res.success) {
+                setLoading(false);
+                toast.error(res.data.message, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Bounce,
+                });
+            }
+
+            if (loading) {
+                return <div className="fixed top-0 left-0 h-screen w-full bg-white flex items-center justify-center">
+                    <Oval
+                        visible={true}
+                        height="80"
+                        width="80"
+                        color="#4fa94d"
+                        ariaLabel="oval-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                    />
+                </div>
+            }
+
+            // todo: react toast success message 
+            toast.success('Login successful!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Bounce,
+            });
+            // todo: react toast success message
+
+
+            console.log(res);
+        } catch (error) {
+            setLoading(false);
+            console.log(error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
+        }
+    }
+
+    useEffect(() => {
+        if (token) {
+            navigate('/');
+        }
+    }, [token])
+
+
+    if (success) {
+        <>
+            <main className="w-full py-10 h-screen items-center justify-center">
+                <div className="bg-white border border-gray-200 shadow-md w-full max-w-sm rounded-lg overflow-hidden mx-auto mt-4">
+                    <div className="p-6">
+                        <div>
+                            <h3 className="text-lg font-semibold">Heading</h3>
+                            <p className="mt-2 text-sm text-slate-500 leading-relaxed">
+                                We have sent a verification email to your registered email address. Please open the email and follow the instructions to verify your account.
+                            </p>
+                        </div>
+                        <div className="text-center">
+                            <Link to="/"
+                                type="button"
+                                className="inline mt-6 px-5 py-2 rounded-md text-white text-sm font-medium tracking-wider border-none outline-none bg-[#DB4444] hover:bg-[#DB4444] duration-300 cursor-pointer"
+                            >
+                                Go back to Home
+                            </Link >
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </>
+    }
     return (
         <>
             <section className="py-10 md:py-20 px-4 sm:px-6 lg:px-0"> {/* Added responsive padding */}
@@ -26,24 +154,42 @@ const Registration = () => {
                                 Enter Your Details Below
                             </p>
 
-                            <form className="space-y-6 md:space-y-0">
-                                <input
-                                    className="w-full border-b-2 border-[rgba(0,0,0,0.46)] pb-2 outline-0 pe-2 font-poppins focus:border-[#DB4444] transition-colors"
-                                    type="text"
-                                    placeholder="Name"
-                                />
+                            <form onSubmit={handleSubmit(registration)} className="space-y-6 md:space-y-0">
+                                <div className="name">
+                                    <input
+                                        {...register("name", { required: "Name is required" })}
+                                        className="w-full border-b-2 border-[rgba(0,0,0,0.46)] pb-2 outline-0 pe-2 font-poppins focus:border-[#DB4444] transition-colors"
+                                        type="text"
+                                        name="name"
+                                        id="name"
+                                        placeholder="Name"
+                                    />
+                                    {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
+                                </div>
 
-                                <input
-                                    className="w-full border-b-2 border-[rgba(0,0,0,0.46)] pb-2 outline-0 pe-2 font-poppins md:pt-12"
-                                    type="email"
-                                    placeholder="Email or Phone Number"
-                                />
+                                <div className="email">
+                                    <input
+                                        {...register("email", { required: "Email is required" })}
+                                        className="w-full border-b-2 border-[rgba(0,0,0,0.46)] pb-2 outline-0 pe-2 font-poppins md:pt-12"
+                                        type="email"
+                                        name="email"
+                                        id="email"
+                                        placeholder="Email or Phone Number"
+                                    />
+                                    {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+                                </div>
 
-                                <input
-                                    className="w-full border-b-2 border-[rgba(0,0,0,0.46)] pb-2 outline-0 pe-2 font-poppins md:pt-12"
-                                    type="password"
-                                    placeholder="Password"
-                                />
+                                <div className="pass">
+                                    <input
+                                        {...register("password", { required: "Password is required" })}
+                                        className="w-full border-b-2 border-[rgba(0,0,0,0.46)] pb-2 outline-0 pe-2 font-poppins md:pt-12"
+                                        type="password"
+                                        name="password"
+                                        id="password"
+                                        placeholder="Password"
+                                    />
+                                    {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+                                </div>
 
                                 <div className="pt-4">
                                     <button

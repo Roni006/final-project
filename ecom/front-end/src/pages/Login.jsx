@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import loginImage from '../assets/login.png';
@@ -7,7 +7,9 @@ import { Link, useNavigate } from 'react-router';
 import { Bounce, toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { loginReducer } from '../redux/slices/authSlice';
+import Cookies from 'js-cookie'
 const Login = () => {
+  const token = Cookies.get('token');
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
@@ -64,6 +66,12 @@ const Login = () => {
       });
     }
   }
+
+  useEffect(() => {
+    if (token) {
+      navigate('/');
+    }
+  },[token])
   return (
     <section className="px-6 md:px-0"> {/* Padding for mobile left/right */}
       <div className="container mx-auto">

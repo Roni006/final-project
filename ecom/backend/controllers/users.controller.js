@@ -13,7 +13,17 @@ const verifyEmailModel = require("../model/verifyEmail.model");
 const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
 
+
+
     try {
+        let existEmail = userModel.findOne({ email });
+
+        if (existEmail) {
+            return res.status(401).send({
+                success: false,
+                message: "Email Already Exist, Please Login",
+            });
+        }
 
         bcrypt.hash(password, 10, async function (err, hash) {
             // Store hash in your password DB.
@@ -175,17 +185,17 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
     console.log(req.body);
-    
+
 
     try {
         let existUser = await userModel.findOne({ email });
         console.log(existUser.password);
-        
+
 
         if (existUser) {
             bcrypt.compare(password, existUser.password, (err, data) => {
                 console.log(data);
-                
+
                 if (err) {
                     console.log(err);
                     res.status(500).send({
@@ -583,7 +593,7 @@ const editUserProfile = async (req, res) => {
         });
     }
 };
- 
+
 
 // ! all user
 const user = async (req, res) => {
