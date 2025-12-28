@@ -9,6 +9,7 @@ import Home from "./pages/Home"
 import Login from "./pages/Login"
 import Shop from "./pages/Shop"
 import Registration from "./pages/Registration"
+import Category from "./pages/Category"
 
 function App() {
   const router = createBrowserRouter(
@@ -22,6 +23,7 @@ function App() {
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Registration />} />
+          <Route path="/category" element={<Category />} />
           <Route path="*" element={<Error/>} />
         </Route>
       </Route>
