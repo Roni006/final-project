@@ -5,9 +5,11 @@ import loginImage from '../assets/login.png';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router';
 import { Bounce, toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { loginReducer } from '../redux/slices/authSlice';
 const Login = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
@@ -44,7 +46,7 @@ const Login = () => {
       // todo: react toast success message
 
 
-
+      dispatch(loginReducer(res.data.data));
       navigate('/');
       console.log(res);
     } catch (error) {

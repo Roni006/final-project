@@ -1,15 +1,32 @@
 import React, { useState } from 'react';
-import { Link, NavLink } from 'react-router'; 
-import { LuSearch, LuUser, LuX } from "react-icons/lu"; 
+import { Link, NavLink } from 'react-router';
+import { LuSearch, LuUser, LuX } from "react-icons/lu";
 import { IoIosArrowDown, IoMdHeartEmpty } from "react-icons/io";
 import { IoCartOutline } from "react-icons/io5";
 import { CgMenuRight } from "react-icons/cg";
+import { useDispatch, useSelector } from 'react-redux';
 
 const Navbar = () => {
+    const dispatch = useDispatch();
+    const loggedinUser = useSelector((state) => state.auth.user);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     // State for Language Dropdown
     const [language, setLanguage] = useState("English");
+    const logOut = async () => {
+        dispatch(logOutReducer());
+        let res = await axios.post(
+            `${import.meta.env.VITE_API}/auth/logout`,
+            {},
+            {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            },
+        );
 
+        console.log(res);
+    };
     return (
         <nav className='border-b border-[rgba(0,0,0,0.25)] relative bg-white'>
             {/* Top Bar */}
@@ -22,12 +39,12 @@ const Navbar = () => {
                                 <Link to="/shop" className="font-semibold underline ml-2">Shop Now</Link>
                             </p>
                         </div>
-                        
+
                         {/* RESTORED: Language Dropdown Functionality */}
                         <div className="hidden md:block md:w-[20%] text-end">
                             <div className='flex justify-end gap-[9px] items-center'>
                                 <div className="relative">
-                                    <select 
+                                    <select
                                         value={language}
                                         onChange={(e) => setLanguage(e.target.value)}
                                         className="appearance-none bg-transparent border-none outline-0 font-poppins text-[14px] leading-[21px] text-[#FAFAFA] font-normal cursor-pointer pr-5"
@@ -48,7 +65,7 @@ const Navbar = () => {
             {/* Main Navbar */}
             <div className="container mx-auto px-4">
                 <div className="py-4 flex items-center justify-between gap-4">
-                    
+
                     {/* LOGO */}
                     <div className="flex-shrink-0">
                         <Link to="/">
@@ -68,13 +85,13 @@ const Navbar = () => {
 
                     {/* RIGHT SIDE: Search, Icons, Hamburger */}
                     <div className="flex items-center gap-2 md:gap-3 lg:gap-5">
-                        
+
                         {/* SEARCH (Desktop Only) */}
                         <div className="hidden lg:relative lg:block">
-                            <input 
-                                className="bg-[#F5F5F5] py-2 px-4 pr-10 w-[240px] text-[13px] rounded-sm font-poppins outline-none" 
-                                type='text' 
-                                placeholder="What are you looking for?" 
+                            <input
+                                className="bg-[#F5F5F5] py-2 px-4 pr-10 w-[240px] text-[13px] rounded-sm font-poppins outline-none"
+                                type='text'
+                                placeholder="What are you looking for?"
                             />
                             <LuSearch className="absolute top-1/2 -translate-y-1/2 right-3 text-lg cursor-pointer" />
                         </div>
@@ -84,19 +101,48 @@ const Navbar = () => {
                             <Link to="/wishlist" className="w-8 h-8 hover:bg-[#DB4444] flex justify-center items-center rounded-full transition-all group">
                                 <IoMdHeartEmpty className="text-[20px] text-black group-hover:text-white" />
                             </Link>
-                            
+
                             <Link to="/cart" className="w-8 h-8 hover:bg-[#DB4444] flex justify-center items-center rounded-full transition-all group">
                                 <IoCartOutline className="text-[20px] text-black group-hover:text-white" />
                             </Link>
 
-                            <Link to="/login" className="w-8 h-8 hover:bg-[#DB4444] flex justify-center items-center rounded-full transition-all group">
-                                <LuUser className="text-[20px] text-black group-hover:text-white" />
-                            </Link>
+                            {
+                                loggedinUser ? (
+                                    <div className='relative group'>
+                                        <img
+                                            className='w-[30px] h-[30px] rounded-full cursor-pointer'
+                                            src={loggedinUser.image}
+                                            alt={loggedinUser.name} />
+
+                                        <ul className='absolute top-[30px] lef-0 hidden bg-white z-1000 group-hover:block w-[150px] py-2 px-3'>
+                                            <Link>
+                                                <li className='font-medium hover:text-[#DB4444] duration-300 pb-[5px] '>
+                                                    Profile
+                                                </li>
+                                            </Link>
+                                            <Link
+                                                onClick={logOut}
+                                                className='font-medium hover:text-[#DB4444] duration-300'>
+                                                Log Out
+                                            </Link>
+                                        </ul>
+                                    </div>
+                                )
+
+
+                                    : (
+                                        <Link to="/login" className="w-8 h-8 hover:bg-[#DB4444] flex justify-center items-center rounded-full transition-all group">
+                                            <LuUser className="text-[20px] text-black group-hover:text-white" />
+                                        </Link>
+                                    )
+                            }
+
+
                         </div>
 
                         {/* HAMBURGER (Right Side) */}
                         <div className="lg:hidden flex items-center">
-                            <button 
+                            <button
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                                 className="text-3xl text-black cursor-pointer focus:outline-none ml-1"
                             >
